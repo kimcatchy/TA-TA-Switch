@@ -1,0 +1,20 @@
+{
+  "tray": {
+    "launch": "엔드필드 실행",
+    "profiles": "프로필 선택",
+    "remove_profile": "프로필 삭제",
+    "save_session": "현재 세션 저장",
+    "auto_detect": "경로 자동 탐지",
+    "check_paths": "현재 경로 확인",
+    "set_session": "세션 경로 설정",
+    "set_game": "게임 경로 설정",
+    "set_language": "언어 설정",
+    "quit": "종료"
+  },
+  "notifications": {
+    "switch_success_title": "프로필 전환 완료",
+    "switch_success_msg": "'{}' 프로필로 전환되었습니다.",
+    "switch_failed_title": "전환 실패",
+    "switch_failed_msg": "프로필 전환에 실패했습니다: {}\n\n게임이 완전히 종료되었는지 확인해주세요."
+  }
+}

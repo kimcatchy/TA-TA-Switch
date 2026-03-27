@@ -1,0 +1,20 @@
+{
+  "tray": {
+    "launch": "Launch Endfield",
+    "profiles": "Select Profile",
+    "remove_profile": "Remove Profile",
+    "save_session": "Save Current Session",
+    "auto_detect": "Auto Detect Paths",
+    "check_paths": "Check Current Paths",
+    "set_session": "Set Session Path",
+    "set_game": "Set Game Path",
+    "set_language": "Set Language",
+    "quit": "Quit"
+  },
+  "notifications": {
+    "switch_success_title": "Profile Switched",
+    "switch_success_msg": "Successfully switched to profile: {}",
+    "switch_failed_title": "Switch Failed",
+    "switch_failed_msg": "Failed to switch profile: {}\n\nMake sure the game is completely closed."
+  }
+}
