@@ -1,4 +1,12 @@
 {
+  "common": {
+    "error": "오류",
+    "success": "성공",
+    "info": "정보",
+    "confirm": "확인",
+    "save": "저장",
+    "cancel": "취소"
+  },
   "tray": {
     "launch": "엔드필드 실행",
     "profiles": "프로필 선택",
@@ -11,7 +19,22 @@
     "set_language": "언어 설정",
     "quit": "종료"
   },
+  "dialogs": {
+    "add_profile_title": "현재 세션 저장",
+    "profile_name_label": "프로필 이름:",
+    "enter_name_error": "프로필 이름을 입력해주세요.",
+    "save_success_msg": "프로필이 성공적으로 저장되었습니다.",
+    "delete_confirm_title": "삭제 확인",
+    "delete_confirm_msg": "'{}' 프로필을 삭제하시겠습니까?",
+    "select_session_dir": "세션 디렉토리 선택",
+    "select_game_exe": "게임 실행 파일 선택",
+    "exe_filter": "실행 파일 (*.exe)",
+    "auto_detect_success": "경로를 성공적으로 감지하고 저장했습니다:\n\n세션: {}\n게임: {}",
+    "auto_detect_failed": "경로를 자동으로 감지할 수 없습니다.",
+    "current_paths_msg": "현재 경로 설정:\n\n세션: {}\n게임: {}"
+  },
   "notifications": {
+    "launch_failed": "실행 실패: {}",
     "switch_success_title": "프로필 전환 완료",
     "switch_success_msg": "'{}' 프로필로 전환되었습니다.",
     "switch_failed_title": "전환 실패",

@@ -1,4 +1,12 @@
 {
+  "common": {
+    "error": "Error",
+    "success": "Success",
+    "info": "Information",
+    "confirm": "Confirm",
+    "save": "Save",
+    "cancel": "Cancel"
+  },
   "tray": {
     "launch": "Launch Endfield",
     "profiles": "Select Profile",
@@ -11,7 +19,22 @@
     "set_language": "Set Language",
     "quit": "Quit"
   },
+  "dialogs": {
+    "add_profile_title": "Save Current Session",
+    "profile_name_label": "Profile Name:",
+    "enter_name_error": "Please enter a profile name.",
+    "save_success_msg": "Profile saved successfully.",
+    "delete_confirm_title": "Confirm Delete",
+    "delete_confirm_msg": "Are you sure you want to delete profile '{}'?",
+    "select_session_dir": "Select Session Directory",
+    "select_game_exe": "Select Game Executable",
+    "exe_filter": "Executable (*.exe)",
+    "auto_detect_success": "Paths detected and saved successfully:\n\nSession: {}\nGame: {}",
+    "auto_detect_failed": "Could not auto-detect paths.",
+    "current_paths_msg": "Current Path Settings:\n\nSession: {}\nGame: {}"
+  },
   "notifications": {
+    "launch_failed": "Failed to launch: {}",
     "switch_success_title": "Profile Switched",
     "switch_success_msg": "Successfully switched to profile: {}",
     "switch_failed_title": "Switch Failed",

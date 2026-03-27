@@ -8,7 +8,6 @@ use tray_icon::{
     TrayIconBuilder, TrayIcon,
 };
 use std::cell::RefCell;
-use std::rc::Rc;
 use std::time::Duration;
 use std::sync::mpsc;
 use image::io::Reader as ImageReader;
@@ -57,7 +56,9 @@ impl TrayApp {
                 "launch" => {
                     let settings = settings_manager::load_settings();
                     if let Err(e) = game_launcher::launch_endfield(&settings.game_path) {
-                        nwg::modal_error_message(&self.window.handle, "Error", &format!("Failed to launch: {}", e));
+                        let title = i18n_manager::get_message("common", "error");
+                        let msg = i18n_manager::get_message("notifications", "launch_failed").replace("{}", &e);
+                        nwg::modal_error_message(&self.window.handle, &title, &msg);
                     }
                 }
                 "add_profile" => {
@@ -68,9 +69,10 @@ impl TrayApp {
                 "set_session_path" => {
                     std::thread::spawn(|| {
                         nwg::init().unwrap_or_default();
+                        let title = i18n_manager::get_message("dialogs", "select_session_dir");
                         let mut dialog = nwg::FileDialog::default();
                         nwg::FileDialog::builder()
-                            .title("Select Session Directory")
+                            .title(&title)
                             .action(nwg::FileDialogAction::OpenDirectory)
                             .build(&mut dialog).unwrap();
                         if dialog.run::<&nwg::ControlHandle>(None) {
@@ -85,10 +87,12 @@ impl TrayApp {
                 "set_game_path" => {
                     std::thread::spawn(|| {
                         nwg::init().unwrap_or_default();
+                        let title = i18n_manager::get_message("dialogs", "select_game_exe");
+                        let filter = i18n_manager::get_message("dialogs", "exe_filter");
                         let mut dialog = nwg::FileDialog::default();
                         nwg::FileDialog::builder()
-                            .title("Select Game Executable")
-                            .filters("Executable (*.exe)")
+                            .title(&title)
+                            .filters(&filter)
                             .build(&mut dialog).unwrap();
                         if dialog.run::<&nwg::ControlHandle>(None) {
                             if let Ok(path) = dialog.get_selected_item() {
@@ -114,24 +118,33 @@ impl TrayApp {
                         }
                         if changed {
                             let _ = settings_manager::save_settings(&settings);
-                            let msg = format!("Paths detected and saved successfully:\n\nSession: {}\nGame: {}", settings.session_path, settings.game_path);
-                            nwg::modal_info_message(&nwg::ControlHandle::NoHandle, "Auto Detect", &msg);
+                            let title = i18n_manager::get_message("tray", "auto_detect");
+                            let msg = i18n_manager::get_message("dialogs", "auto_detect_success")
+                                .replace("{}", &settings.session_path)
+                                .replace("{}", &settings.game_path);
+                            nwg::modal_info_message(&nwg::ControlHandle::NoHandle, &title, &msg);
                         } else {
-                            nwg::modal_error_message(&nwg::ControlHandle::NoHandle, "Auto Detect", "Could not auto-detect paths.");
+                            let title = i18n_manager::get_message("tray", "auto_detect");
+                            let msg = i18n_manager::get_message("dialogs", "auto_detect_failed");
+                            nwg::modal_error_message(&nwg::ControlHandle::NoHandle, &title, &msg);
                         }
                     });
                 }
                 "check_paths" => {
                     let settings = settings_manager::load_settings();
-                    let msg = format!("Current Path Settings:\n\nSession: {}\nGame: {}", settings.session_path, settings.game_path);
-                    nwg::modal_info_message(&self.window.handle, "Current Paths", &msg);
+                    let title = i18n_manager::get_message("tray", "check_paths");
+                    let msg = i18n_manager::get_message("dialogs", "current_paths_msg")
+                        .replace("{}", &settings.session_path)
+                        .replace("{}", &settings.game_path);
+                    nwg::modal_info_message(&self.window.handle, &title, &msg);
                 }
                 id if id.starts_with("lang:") => {
                     let lang = &id[5..];
                     let mut settings = settings_manager::load_settings();
                     settings.language = lang.to_string();
                     if let Err(e) = settings_manager::save_settings(&settings) {
-                        nwg::modal_error_message(&self.window.handle, "Error", &e);
+                        let title = i18n_manager::get_message("common", "error");
+                        nwg::modal_error_message(&self.window.handle, &title, &e);
                     }
                     self.update_tray_menu();
                 }
@@ -154,15 +167,18 @@ impl TrayApp {
                 }
                 id if id.starts_with("delete:") => {
                     let acc_name = &id[7..];
+                    let title = i18n_manager::get_message("dialogs", "delete_confirm_title");
+                    let msg = i18n_manager::get_message("dialogs", "delete_confirm_msg").replace("{}", acc_name);
                     let confirm = nwg::modal_message(&self.window.handle, &nwg::MessageParams {
-                        title: "Confirm Delete",
-                        content: &format!("Are you sure you want to delete profile '{}'?", acc_name),
+                        title: &title,
+                        content: &msg,
                         buttons: nwg::MessageButtons::YesNo,
                         icons: nwg::MessageIcons::Question,
                     });
                     if confirm == nwg::MessageChoice::Yes {
                         if let Err(e) = account_manager::delete_account(acc_name) {
-                            nwg::modal_error_message(&self.window.handle, "Error", &e);
+                            let err_title = i18n_manager::get_message("common", "error");
+                            nwg::modal_error_message(&self.window.handle, &err_title, &e);
                         }
                         self.update_tray_menu();
                     }
@@ -184,27 +200,68 @@ impl TrayApp {
 /// Dialog for adding a new profile based on current session files.
 #[derive(Default, NwgUi)]
 pub struct AddProfileApp {
-    #[nwg_resource(title: "Add Profile", size: (300, 150), position: (300, 300))]
+    #[nwg_resource(family: "Segoe UI", size: 15)]
+    small_font: nwg::Font,
+
+    #[nwg_control(size: (300, 130), flags: "WINDOW|VISIBLE")]
+    #[nwg_events( OnWindowClose: [nwg::stop_thread_dispatch()] )]
     window: nwg::Window,
 
     #[nwg_layout(parent: window, spacing: 10)]
     layout: nwg::GridLayout,
 
-    #[nwg_control(text: "Profile Name:")]
-    #[nwg_layout_item(layout: layout, row: 0, col: 0)]
+    #[nwg_control(text: "", font: Some(&data.small_font))]
+    #[nwg_layout_item(layout: layout, row: 0, col: 0, col_span: 2)]
     label: nwg::Label,
 
-    #[nwg_control(text: "")]
+    #[nwg_control(text: "", font: Some(&data.small_font))]
     #[nwg_layout_item(layout: layout, row: 1, col: 0, col_span: 2)]
     input: nwg::TextInput,
 
-    #[nwg_control(text: "Save")]
+    #[nwg_control(text: "", font: Some(&data.small_font))]
     #[nwg_layout_item(layout: layout, row: 2, col: 0)]
+    #[nwg_events( OnButtonClick: [AddProfileApp::save] )]
     save_btn: nwg::Button,
 
-    #[nwg_control(text: "Cancel")]
+    #[nwg_control(text: "", font: Some(&data.small_font))]
     #[nwg_layout_item(layout: layout, row: 2, col: 1)]
+    #[nwg_events( OnButtonClick: [AddProfileApp::cancel] )]
     cancel_btn: nwg::Button,
+
+    update_tx: Option<mpsc::Sender<()>>,
+}
+
+impl AddProfileApp {
+    fn save(&self) {
+        let text = self.input.text();
+        if text.trim().is_empty() {
+            let title = i18n_manager::get_message("common", "error");
+            let msg = i18n_manager::get_message("dialogs", "enter_name_error");
+            nwg::modal_error_message(&self.window, &title, &msg);
+            return;
+        }
+
+        let settings = settings_manager::load_settings();
+        match account_manager::save_account_session(&settings.session_path, &text) {
+            Ok(_) => {
+                let title = i18n_manager::get_message("common", "success");
+                let msg = i18n_manager::get_message("dialogs", "save_success_msg");
+                nwg::modal_info_message(&self.window, &title, &msg);
+                if let Some(ref tx) = self.update_tx {
+                    let _ = tx.send(());
+                }
+                self.window.close();
+            }
+            Err(e) => {
+                let title = i18n_manager::get_message("common", "error");
+                nwg::modal_error_message(&self.window, &title, &e);
+            }
+        }
+    }
+
+    fn cancel(&self) {
+        self.window.close();
+    }
 }
 
 /// Constructs the hierarchical tray menu.
@@ -318,44 +375,25 @@ fn main() {
 fn run_add_profile_dialog(tx: mpsc::Sender<()>) {
     std::thread::spawn(move || {
         nwg::init().unwrap_or_default();
-        let app = AddProfileApp::build_ui(Default::default()).expect("Failed to build Add Profile UI");
+        nwg::Font::set_global_family("Segoe UI").unwrap_or_default();
+
+        let mut app_data = AddProfileApp::default();
+        app_data.update_tx = Some(tx);
+
+        let app = AddProfileApp::build_ui(app_data).expect("Failed to build Add Profile UI");
         
-        let app_rc = Rc::new(app);
-        let app_rc_clone = app_rc.clone();
-        
-        let handler = nwg::full_bind_event_handler(&app_rc.window.handle, move |evt, _evt_data, handle| {
-            use nwg::Event as E;
-            match evt {
-                E::OnButtonClick => {
-                    if handle == app_rc_clone.save_btn {
-                        let text = app_rc_clone.input.text();
-                        if !text.is_empty() {
-                            let settings = crate::settings_manager::load_settings();
-                            match crate::account_manager::save_account_session(&settings.session_path, &text) {
-                                Ok(_) => {
-                                    nwg::modal_info_message(&app_rc_clone.window.handle, "Success", "Profile saved successfully.");
-                                    let _ = tx.send(());
-                                }
-                                Err(e) => {
-                                    nwg::modal_error_message(&app_rc_clone.window.handle, "Error", &e);
-                                }
-                            }
-                            app_rc_clone.window.close();
-                        }
-                    } else if handle == app_rc_clone.cancel_btn {
-                        app_rc_clone.window.close();
-                    }
-                }
-                E::OnWindowClose => {
-                    if handle == app_rc_clone.window {
-                        nwg::stop_thread_dispatch();
-                    }
-                }
-                _ => {}
-            }
-        });
+        // Center the window
+        let sx = nwg::Monitor::width();
+        let sy = nwg::Monitor::height();
+        let (wx, wy) = app.window.size();
+        app.window.set_position(sx as i32 / 2 - wx as i32 / 2, sy as i32 / 2 - wy as i32 / 2);
+
+        // Set localized texts
+        app.window.set_text(&i18n_manager::get_message("dialogs", "add_profile_title"));
+        app.label.set_text(&i18n_manager::get_message("dialogs", "profile_name_label"));
+        app.save_btn.set_text(&i18n_manager::get_message("common", "save"));
+        app.cancel_btn.set_text(&i18n_manager::get_message("common", "cancel"));
 
         nwg::dispatch_thread_events();
-        nwg::unbind_event_handler(&handler);
     });
 }
