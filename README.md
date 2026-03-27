@@ -4,6 +4,8 @@
 
 ![Preview](./docs/preview.png)
 
+[Download Latest Release](https://github.com/kimcatchy/TA-TA-Switch/releases/download/v1.0.0/TA-TA-Switch.exe)
+
 A lightweight, high-performance account manager for "Arknights: Endfield (Global)". This tool is designed to switch between multiple accounts with a single click by swapping locally stored session cache files, with a minimal memory footprint (< 10MB) and zero background CPU usage.
 
 ⚠️ **Note: This tool is ONLY compatible with "Arknights: Endfield" installed via the Epic Games Store. It does not support other installation methods.**
@@ -28,7 +30,7 @@ Settings and backup data are stored in the user's **Documents** folder instead o
 ## 🚀 How to Use
 
 1. **Launch**: Run `TA-TA-Switch.exe`.
-2. **Auto Detect**: Right-click the tray icon and select **Auto Detect Paths**.
+2. **Auto Detect**: Click the tray icon and select **Auto Detect Paths**.
 3. **Save Session**: Log in to an account in-game, then select **Save Current Session** from the tray to name and save that profile.
 4. **Switch**: Close the game and select a profile from the **Select Profile** menu.
 5. **Launch Game**: Click **Launch Endfield** to start the game with the selected profile.
@@ -59,4 +61,4 @@ Settings and backup data are stored in the user's **Documents** folder instead o
 
 ## ⚠️ Disclaimer
 - This tool does not modify the game client; it only manages local cache files. Usage is at your own risk.
--This tool is not affiliated with, endorsed by, or officially supported by Hypergryph, Arknights: Endfield, or the Epic Games Store.
+- This tool is not affiliated with, endorsed by, or officially supported by Hypergryph, Arknights: Endfield, or the Epic Games Store.
