@@ -8,13 +8,13 @@
 
 A lightweight, high-performance account manager for "Arknights: Endfield (Global)". This tool is designed to switch between multiple accounts with a single click by swapping locally stored session cache files, with a minimal memory footprint (< 10MB) and zero background CPU usage.
 
-⚠️ **Note: This tool is ONLY compatible with "Arknights: Endfield" installed via the Epic Games Store. It does not support other installation methods.**
+⚠️ **Note: This tool is compatible with "Arknights: Endfield" installed via the [Native Launcher](https://endfield.gryphline.com/) and the Epic Games Store. Installations via Google Play Games are currently not supported.**
 
 ## ✨ Features
 
 - **Profile Swapping**: Instantly switch between multiple accounts by replacing session files.
 - **Memory Efficient & Native UI**: Uses native Windows Win32 API for menus and dialogs, optimized to stay under 10MB of RAM.
-- **Auto Detection**: Automatically finds your game installation and session folders.
+- **Auto Detection**: Automatically finds your game installation and session folders. (Native Launcher prioritized)
 - **Secure Backups**: Keeps account session data safe in independent storage.
 - **Admin Elevation**: Automatically requests administrator privileges to modify session files.
 - **Localized**: Full support for English and Korean.
@@ -30,7 +30,7 @@ Settings and backup data are stored in the user's **Documents** folder instead o
 ## 🚀 How to Use
 
 1. **Launch**: Run `TA-TA-Switch.exe`.
-2. **Auto Detect**: Click the tray icon and select **Auto Detect Paths**.
+2. **Auto Detect**: Click the tray icon and select **Auto Detect Paths**. Prioritizes installations via the native launcher; if not found, checks for the Epic Games Store path.
 3. **Save Session**: Log in to an account in-game, then select **Save Current Session** from the tray to name and save that profile.
 4. **Switch**: Close the game and select a profile from the **Select Profile** menu.
 5. **Launch Game**: Click **Launch Endfield** to start the game with the selected profile.

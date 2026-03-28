@@ -107,26 +107,29 @@ impl TrayApp {
                     std::thread::spawn(|| {
                         nwg::init().unwrap_or_default();
                         let mut settings = settings_manager::load_settings();
-                        let mut changed = false;
-                        if let Ok(p) = path_manager::auto_detect_session_path() {
-                            settings.session_path = p;
-                            changed = true;
-                        }
-                        if let Ok(p) = path_manager::auto_detect_game_path() {
-                            settings.game_path = p;
-                            changed = true;
-                        }
-                        if changed {
+                        
+                        let session_res = path_manager::auto_detect_session_path();
+                        let game_res = path_manager::auto_detect_game_path();
+                        
+                        let session_ok = session_res.is_ok();
+                        let game_ok = game_res.is_ok();
+
+                        if session_ok || game_ok {
+                            if let Ok(p) = session_res { settings.session_path = p; }
+                            if let Ok(p) = game_res { settings.game_path = p; }
+                            
                             let _ = settings_manager::save_settings(&settings);
-                            let title = i18n_manager::get_message("tray", "auto_detect");
+                            
+                            let title = i18n_manager::get_message("common", "success");
                             let msg = i18n_manager::get_message("dialogs", "auto_detect_success")
-                                .replace("{}", &settings.session_path)
-                                .replace("{}", &settings.game_path);
-                            nwg::modal_info_message(&nwg::ControlHandle::NoHandle, &title, &msg);
+                                .replacen("{}", if settings.session_path.is_empty() { "Not Found" } else { &settings.session_path }, 1)
+                                .replacen("{}", if settings.game_path.is_empty() { "Not Found" } else { &settings.game_path }, 1);
+                            
+                            nwg::simple_message(&title, &msg);
                         } else {
-                            let title = i18n_manager::get_message("tray", "auto_detect");
+                            let title = i18n_manager::get_message("common", "error");
                             let msg = i18n_manager::get_message("dialogs", "auto_detect_failed");
-                            nwg::modal_error_message(&nwg::ControlHandle::NoHandle, &title, &msg);
+                            nwg::simple_message(&title, &msg);
                         }
                     });
                 }
@@ -134,8 +137,8 @@ impl TrayApp {
                     let settings = settings_manager::load_settings();
                     let title = i18n_manager::get_message("tray", "check_paths");
                     let msg = i18n_manager::get_message("dialogs", "current_paths_msg")
-                        .replace("{}", &settings.session_path)
-                        .replace("{}", &settings.game_path);
+                        .replacen("{}", &settings.session_path, 1)
+                        .replacen("{}", &settings.game_path, 1);
                     nwg::modal_info_message(&self.window.handle, &title, &msg);
                 }
                 id if id.starts_with("lang:") => {

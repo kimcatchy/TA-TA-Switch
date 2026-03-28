@@ -30,7 +30,7 @@
     "select_game_exe": "Select Game Executable",
     "exe_filter": "Executable (*.exe)",
     "auto_detect_success": "Paths detected and saved successfully:\n\nSession: {}\nGame: {}",
-    "auto_detect_failed": "Could not auto-detect paths.",
+    "auto_detect_failed": "Could not auto-detect paths. Please set the session and game paths manually via the tray menu.",
     "current_paths_msg": "Current Path Settings:\n\nSession: {}\nGame: {}"
   },
   "notifications": {

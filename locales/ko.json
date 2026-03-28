@@ -30,7 +30,7 @@
     "select_game_exe": "게임 실행 파일 선택",
     "exe_filter": "실행 파일 (*.exe)",
     "auto_detect_success": "경로를 성공적으로 감지하고 저장했습니다:\n\n세션: {}\n게임: {}",
-    "auto_detect_failed": "경로를 자동으로 감지할 수 없습니다.",
+    "auto_detect_failed": "경로를 자동으로 감지할 수 없습니다. 트레이 메뉴에서 세션 경로와 게임 경로를 수동으로 설정해주세요.",
     "current_paths_msg": "현재 경로 설정:\n\n세션: {}\n게임: {}"
   },
   "notifications": {
